@@ -1,0 +1,1 @@
+<view><view class="{{b}}">{{a}}</view><button bindtap="{{c}}">自增</button><view wx:for="{{d}}" wx:for-item="item" wx:key="d"><text>{{item.a}}</text><text>{{item.b}}</text><text>{{item.c}}</text></view></view>

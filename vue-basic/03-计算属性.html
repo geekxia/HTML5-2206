@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    [v-cloak] { dispaly: none; }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <!-- <h1 v-text='`总价：￥${(num*price).toFixed(2)}`'></h1> -->
+    <h1 v-text='total'></h1>
+    <h1 v-text='hehe'></h1>
+    <hr>
+    <!-- <h1 v-text='Math.random()*count'></h1> -->
+    <h1 v-text='random'></h1>
+    <hr>
+
+    <h1 v-text='msg'></h1>
+    <hr>
+
+    FirstName: <input type="text" v-model='firstname' />
+    LastName: <input type="text" v-model='lastname' />
+    <h1>全名：<input type="text" v-model='fullname'></h1>
+
+
+    <button @click='test'>用代码访问计算属性</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script>
+
+    // 1、计算属性（非常有用）：computed选项
+
+    // 语法：在computed选项中，定义计算属性方法，在方法体使用声明式变量进行若干计算。
+    // 使用：在视图模板中把计算属性直接当作变量直接使用，在vue逻辑代码使用this访问计算属性，默认只有get功能。
+
+    // 作用1：当指令的表达式比较复杂时，我们建议使用计算属性来优化，提升视图模板中代码的可阅读性、可维护性。
+    // 作用2：用于缓存一个复杂的运算，避免组件更新时产生没有必要的性能损耗。计算属性本质上是一个函数，Vue会分析函数体中使用到了哪些声明式变量，有且仅有这些声明式变量发生变化时，计算属性才会重新执行。
+
+    // 如何让计算属性同时支持get/set功能呢？计算属性默认是一个函数，表示get功能。为了支持set，要把计算属性写对象结构 {get, set}。
+    // 计算属性能不能绑定的v-model上？可以。（v-model具有set功能，计算属性可以拆成get/set写法）
+
+    // 在Vue中，计算属性能计算哪些性质的变量？除了可以计算data、vuex数据、$route等，还可以计算一切__ob__的数据。
+
+
+    // 2、面试题：
+    // 计算属性有什么作用？（两大作用）
+    // 计算属性能不能绑定在v-model上？（可以）
+    // 怎么理解计算属性的缓存功能？（有且仅有被关联的声明式变量变化时，计算属性才会重新计算）
+
+    const app = new Vue({
+      el: '#app',
+      data: {
+        num: 1,
+        price: 10,
+        count: 100,
+        msg: '呵',
+        firstname: '',
+        lastname: ''
+      },
+      computed: {
+        // 计算属性默认是get操作
+        total () {
+          // do something 做一切可以做的任何复杂计算
+          const res = (this.num * this.price)
+          const tt = res.toFixed(2)
+          return '总价：￥' + tt
+        },
+        // 计算属性也可以与data无关
+        hehe: {
+          get () {
+            return this.msg + this.msg
+          },
+          set (newVal) {
+            if (newVal.length !== 2) {
+              console.log('---', newVal.length)
+              return new Error('设置hehe时必须给定义这样的格式：AA')
+            }
+            const first = newVal.split('')[0]
+            this.msg = first
+          }
+        },
+        // 用于性能优化的计算属性（缓存）
+        random () {
+          return Math.random() * this.count
+        },
+        fullname: {
+          get () {
+            return this.lastname + '.' + this.firstname
+          },
+          set (val) {
+            const arr = val.split('.')
+            this.firstname = arr[1]
+            this.lastname = arr[0]
+          }
+        }
+      },
+      methods: {
+        test () {
+          console.log('--total', this.total)
+          this.total = 100
+        }
+      }
+    })
+  </script>
+
+</body>
+</html>

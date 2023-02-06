@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+
+  <div id="app">
+    <qf-button></qf-button>
+    <h1>{{ "99.1" | rmb }}</h1>
+    <h1 v-color='"red"'>测试</h1>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script>
+    // 1、插件封装
+    // 在Vue生态中，除了Vue本身，其它所有与Vue相关的第三方包，都是插件，都得以插件的方式进行集成。
+    // 作用：是一种更加高级的代码复用技术，可以以插件的方式为我们提供可复用的组件、混入、指令、过滤器、原型链API。
+    // 经验：以公司真实项目、优秀开源项目，你只要发现里面有好用的组件或指令，都搬到你的review中，以后可以复用。
+
+    // 如何封装Vue插件？(两种写法)
+    // 第一种写法： const Plugin = { install (Vue) { } }
+    // 第二种写法：const Plugin = function (Vue) {}
+
+    // 如何使用Vue插件？（导入插件，Vue(Plugin)）
+
+    // 2、面试题
+    // 你有封装过Vue插件？怎么封装的？封装过什么？（有，老项目中封装的好用东西，以插件的方式搬到新项目中去）
+    // 请问 Vue.use() 有什么用？讲一讲它背后做了什么？（调用插件函数或install方法，并传入Vue实参）
+
+    const QfPlugin = {
+      install (Vue) {
+        Vue.mixin({ data() { return { version: 'v2' }}})
+        Vue.component('qf-button', {
+          template: `
+          <div>我的按钮</div>
+          `
+        })
+        Vue.filter('rmb', val=>('￥'+val))
+        Vue.directive('color', function(el,binding){ el.style.color = binding.value})
+        Vue.prototype.$ajax= function(url,method,data) { console.log('---调接口') }
+      }
+    }
+
+    const SzPlugin = function (Vue) {
+      Vue.prototype.$msg = '来了就是深圳打工人'
+    }
+
+    Vue.use(QfPlugin) // 注册插件（调用插件上的install()方法，并传入Vue实参）
+    Vue.use(SzPlugin) // 如果插件的类型是Function，直接调用并传入Vue实参
+
+    const app = new Vue({
+      mounted () {
+        console.log('--version', this.version)
+        console.log('--$ajax', this.$ajax)
+        console.log('--$msg', this.$msg)
+      }
+    })
+    app.$mount('#app')
+  </script>
+
+</body>
+</html>

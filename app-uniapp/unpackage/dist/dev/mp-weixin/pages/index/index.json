@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "千锋首页",
+  "navigationBarTextStyle": "white",
+  "enablePullDownRefresh": true,
+  "usingComponents": {}
+}

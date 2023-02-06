@@ -1,0 +1,1 @@
+{"version":3,"file":"css/app.89c42ed6.css","mappings":"AAEA,UACE,UACA,SACA,UALE,C","sources":["webpack://react-webpack/./src/assets/app.scss"],"sourcesContent":["$c: blue;\r\n\r\nhtml, body {\r\n  padding: 0;\r\n  margin: 0;\r\n  color: $c;\r\n}\r\n"],"names":[],"sourceRoot":""}

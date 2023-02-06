@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .row {
+      line-height: 22px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <qf-teacher></qf-teacher>
+    <hr>
+    <qf-student></qf-student>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script>
+    // 1、事件总线 const bus = new Vue()
+    // bus.$on('频道', callback)    监听一个“频道”
+    // bus.$emit('频道', '消息')  向指定“频道”上发送消息
+    // bus.$off()   取消订阅某个“频道”
+    // bus.$once()  对某个“频道”只监听一次
+
+    // 2、什么是“订阅-发布”模式？
+    // 这里的事件总线就是一种“订阅-发布”模式；Vue源码中的Dep类也是一种“订阅-发布”模式。
+    // “订阅-发布”模式，也叫做“观察者模式”。
+
+    const bus = new Vue()  // 事件总线（事件系统）
+
+    Vue.component('qf-teacher', {
+      template: `
+      <div>
+        <h2>老师在线</h2>
+        <input type="text" v-model='msg' @keyup.enter='send' />
+        <button @click='send'>发送</button>
+        <div v-html='content'></div>
+      </div>
+      `,
+      data () {
+        return {
+          msg: '',
+          content: ''
+        }
+      },
+      mounted () {
+        bus.$on('qfstu', msg => {
+          this.content += `<div>学生说：${msg}</div>`
+        })
+      },
+      methods: {
+        send () {
+          // 使用事件总线向 qf 频道上发送消息
+          bus.$emit('qf', this.msg)
+          this.msg = ''
+        }
+      }
+    })
+
+    Vue.component('qf-student', {
+      template: `
+      <div>
+        <h2>学生在线</h2>
+        <input type="text" v-model='msg' @keyup.enter='send' />
+        <button @click='send'>发送</button>
+        <div v-html='content'></div>
+      </div>
+      `,
+      data () {
+        return {
+          msg: '',
+          content: ''
+        }
+      },
+      mounted () {
+        // 使用事件总线，监听qf这个频道
+        bus.$on('qf', msg=>{
+          console.log('student--qf频道上有消息来了', msg)
+          this.content += `<div class='row'>老师说：${msg}</div>`
+        })
+      },
+      methods: {
+        send () {
+          bus.$emit('qfstu', this.msg)
+          this.msg = ''
+        }
+      }
+    })
+
+    const app = new Vue({
+      el: '#app'
+    })
+  </script>
+
+</body>
+</html>

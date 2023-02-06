@@ -1,0 +1,15 @@
+/* components/cate/cate.wxss */
+.cate {
+  display: flex;
+}
+.cate view {
+  flex: 1;
+  text-align: center;
+  border: 1rpx solid #ccc;
+  line-height: 80rpx;
+}
+
+.cate view.on {
+  color: white;
+  background-color: orange;
+}

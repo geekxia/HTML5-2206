@@ -1,0 +1,22 @@
+<button bindtap="open">获取用户信息</button>
+<image src='{{avatar}}' bindlongpress="save" />
+<button bindtap="open1">手动打开相册授权框</button>
+
+<!-- 获取手机号，必须使用button表单组件 -->
+<button open-type="getPhoneNumber" bindgetphonenumber="getMobile">登录</button>
+
+<!-- 为了获取用户地理位置 -->
+<button hidden="{{isLoc}}" bindtap="login">立即登录</button>
+
+<!-- 用button实现转发 -->
+<button open-type="share">拼团</button>
+
+<button open-type="contact">联系客服</button>
+
+<button open-type="feedback">投诉建议</button>
+
+<picker mode="region">请选择地址：</picker>
+
+<navigator url='/pages/index/index'>回到首页</navigator>
+
+<map scale='18' longitude='116.307520' latitude='39.984060'></map>

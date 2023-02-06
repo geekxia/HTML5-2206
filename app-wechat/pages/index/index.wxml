@@ -1,0 +1,36 @@
+<!--index.wxml-->
+<view class="container">
+  Hello World
+</view>
+
+<view style="text-align: center;color: red;">你好</view>
+<button bindtap='submit'>点击</button>
+
+<view style="text-align: center;">{{num}}</view>
+<button bindtap='add'>自增</button>
+
+<view wx:for='{{list}}' wx:for-index='idx' wx:for-item='abc' wx:key='*this'>
+  <view data-row='{{abc.id}}' bindtap="rowSkip">{{idx}} - {{abc.name}}</view>
+</view>
+
+<view wx:if='{{row===1}}'>第一行</view>
+<view wx:elif='{{row===2}}'>第二行</view>
+<view wx:else>第三行</view>
+<button bindtap='rowHandle'>切换</button>
+
+<view style='border:1rpx solid red; height:{{h}}rpx; width: 375rpx;'></view>
+<button data-row='1' bindtap='hplus'>我要长高</button>
+<view class="{{box}} box">你好</view>
+
+<!-- <input class="name" type="text" value="{{name}}" bindinput="getName"/> -->
+<input class="name" type="text" model:value="{{name}}"/>
+
+<view id='foo' class="foo"></view>
+<button bindtap="start">开始动画</button>
+
+<!-- 使用自定义组件 -->
+<qf-cate value='{{cate}}' bindchange='getCate'></qf-cate>
+
+<view class="tabbar"></view>
+
+

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .page span {
+      display: inline-block;
+      padding: 0 10px;
+      cursor: pointer;
+    }
+    .page span.on {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <qf-child-a :num='num' @add='num+=$event'></qf-child-a>
+    <hr>
+    <qf-child-b :num='num' @sub='num-=$event'></qf-child-b>
+    <hr>
+    <qf-child-c></qf-child-c>
+    <hr>
+    <div ref='box'>普通HTML标签</div>
+    <qf-child-d ref='dd'></qf-child-d>
+    <button @click='handle'>测试ref操作</button>
+    <hr>
+    <!-- 在vue中，凡是被包裹在自定义组件内部的东西，都是插槽内容。 -->
+    <!-- 理解：插槽内容是父组件的 -->
+    <qf-child-e>
+      <template #default='scoped'>
+        <div>别墅一栋 {{scoped.foo}} {{scoped.bar}}</div>
+      </template>
+      <template #car='{car}'>
+        <div>{{car}}专用车位</div>
+      </template>
+    </qf-child-e>
+    <hr>
+    <qf-child-f></qf-child-f>
+    <hr>
+    <!-- 在子组件中使用$attrs接收自定义属性，在子组件中使用$listeners接收自定义事件 -->
+    <qf-child-g :page='page' @change='changePage'></qf-child-g>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script>
+    // 1、闲聊通信。
+    // 通信是组件或模块之间的数据交互。多重通信就形成了数据流，数据流管理的优劣决定了产品能否上线。数据流（通信）越混乱，代码越难维护。
+
+    // 2、Vue中有哪些常见的通信方案？
+
+    // （*1*）父子组件通信：父传子使用自定义属性（props），子传父使用自定义事件（$emit()）。
+
+    // （*2*）状态提升：当兄弟组件之间需要共享数据时，我们通常的做法是把这个数据定义它们的共同的父组件中，再通过自定义属性实现数据共享。
+
+    // （*3*）provide/inject：这是在组件树中，自上而下的一种数据通信方案，也就是说只能父级组件中向后代组件传递。需要注意的是，当provide提供动态数据（声明式变量）时，动态数据发生变化，后代组件们不会自动更新。这是为什么呢？你自己从生命周期流程的角度去思考。
+
+    // （4）ref通信：ref是Vue内置的一个属性，每一个HTML元素或组件都有这个属性；ref作用在HTML元素上得到DOM实例，ref作用在组件上得到组件实例。使用ref访问组件实例，进一步可以访问组件中的数据和方法。（说明：ref是一种快速的DOM的访问方式，当然ref也可作用在组件上得到组件实例。这些ref得到的DOM实例或组件实例，使用this.$refs来访问它们。ref尽量少用，除非某些难搞的需求。）
+
+    // （*5*）插槽通信：借助<slot>组件实现从子组件向父组件传递数据，借助this.$slots访问父组件中的插槽实例。(在自定义组件中使用this.$slots访问父组件给的插槽实例；在父组件插槽中使用#default='scoped'访问子组件<slot>回传的数据。这种通信在组件库中、工作中，非常常见！)
+
+    // （6）$parent/$children：借助$parent/$children可以实现，在任一组件中访问组件树中的其它任意组件实例，可以做到在组件中随意穿梭。($parent表示的是当前组件的父组件实例，$children表示的是当前组件的子组件们。)
+
+    // （7）$attrs/$listeners：借助$attrs可访问父组件传递过来的自定义属性（除了class和style外），借助$listenrs可以访问父组件给的自定义事件。在某些场景下，$attrs/$listeners可以替代props/$emit()这种通用的通信方案。
+
+    // （*8*）事件总线：借助于Vue内置的事件系统（$on/$emit/$off/$once）实现“订阅-发布”式的通信，这种通信方式是一种与组件层级无关的“一对多”的通信。（工作中很少用，一些特殊的Vue项目才用得到事件总线。）
+
+    // （9）Vuex通信：这是Vue架构中终极的通信方案，也是Vue架构中用的最多的一种通信方案。
+
+    // 3、面试题
+    // Vue中有哪些常用的通信方案？（父子、ref、provide、slot、$parent、事件总线、Vuex）
+    // 父子组件之间怎么通信？（父传子、子传父）
+    // provide/inject有什么特点？（只能自上而下、没有响应式）
+    // $attrs能不能接收class和style？（不能）
+    // 谈一谈你对事件总线的理解（“订阅-发布”模式）的理解？
+    // 谈一谈以上九种通信方案之间的区别？或者任意两种通信方案之间的区别？（语法区别、使用场景的区别）
+
+    Vue.component('qf-child-a', {
+      template: `
+      <div>
+        <div>大哥 {{num}}</div>
+        <button @click='$emit("add", 1)'>加1</button>
+      </div>
+      `,
+      props: {
+        num: { type: Number, default: 0 }
+      }
+    })
+
+    Vue.component('qf-child-b', {
+      template: `
+      <div>
+        <div>二哥 {{num}}</div>
+        <button @click='$emit("sub", 2)'>减2</button>
+      </div>
+      `,
+      props: {
+        num: { type: Number, default: 0 }
+      }
+    })
+
+    Vue.component('qf-child-c', {
+      template: `
+      <div>
+        <div>三哥 - {{msg}} - {{num}}</div>
+        <span v-for='i in list' v-text='i'></span>
+      </div>
+      `,
+      // 从组件树上下文中注入provide数据
+      inject: ['msg', 'list', 'num']
+    })
+
+    Vue.component('qf-child-d', {
+      template: `
+      <div>
+        <div>四哥：{{age}}</div>
+      </div>
+      `,
+      data () {
+        return {
+          age: 10
+        }
+      },
+      methods: {
+        changeAge (arg) {
+          this.age = arg || 10
+        }
+      }
+    })
+
+    Vue.component('qf-child-e', {
+      template:`
+      <div>
+        <div>五哥</div>
+        <slot name='default' foo='你好' bar='世界'>
+          <div>我的房子</div>
+        </slot>
+        <slot name='car' :car='car'>
+          <div>我的车位</div>
+        </slot>
+      </div>
+      `,
+      data () {
+        const cars = ['劳斯莱斯','奔驰','宝马']
+        const val = cars[Math.floor(Math.random()*3)]
+        return {
+          car: val
+        }
+      },
+      mounted () {
+        // 在子组件中，使用this.$slots来访问父组件给的插槽内容
+        console.log('--slots', this.$slots)
+      }
+    })
+
+    Vue.component('qf-child-f', {
+      template: `
+      <div>
+        <div>六哥 {{num}}</div>
+
+      </div>
+      `,
+      data () {
+        return {
+          num: 1
+        }
+      },
+      methods: {
+        add () {
+          this.num++
+        }
+      }
+    })
+
+    Vue.component('qf-child-g', {
+      template: `
+      <div class='page'>
+        <div>七哥</div>
+        <span v-for='i in pageArr' v-text='i' :class='{on:$attrs.page===i}' @click='$listeners.change(i)'></span>
+      </div>
+      `,
+      mounted () {
+        console.log('g---$attrs', this.$attrs)
+        console.log('g---$listeners', this.$listeners)
+      },
+      computed: {
+        pageArr () {
+          const p = this.$attrs.page
+          if (p<=3) return [1,2,3,4,5]
+          else return [p-2,p-1,p,p+1,p+2]
+        }
+      }
+    })
+
+    const app = new Vue({
+      el: '#app',
+      data () {
+        // do something
+        return {
+          num: 1,
+          page: 1
+        }
+      },
+      // 从当前组件节点开始，向后代组件们传递数据
+      // provide: {
+      //   msg: '你好',
+      //   list: [1,2,3,4]
+      // },
+      provide () {
+        // do something
+        return {
+          msg: '你好',
+          list: [1,2,3,4], // 静态数据
+          num: this.num    // 动态数据
+        }
+      },
+      methods: {
+        handle () {
+          console.log('---refs', this.$refs)
+          this.$refs.box.style.color = 'red'
+          this.$refs.dd.changeAge(20)
+        },
+        changePage (arg) {
+          this.page = arg || 1
+        }
+      },
+      mounted () {
+        console.log('app---$parent', this.$parent)
+        console.log('app---$children[5]', this.$children[5])
+      }
+    })
+  </script>
+
+</body>
+</html>

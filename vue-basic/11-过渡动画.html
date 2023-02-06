@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .qf-enter {
+      opacity: 0;
+      color: red;
+      font-size: 12px;
+    }
+    .qf-enter-active {
+      transition: all ease 2s;
+    }
+    .qf-enter-to {
+      opacity: 1;
+      color: black;
+      font-size: 16px;
+    }
+
+    .qf-leave {
+      opacity: 1;
+      color: black;
+      font-size: 16px;
+    }
+    .qf-leave-active {
+      transition: all ease 3s;
+    }
+    .qf-leave-to {
+      opacity: 0;
+      color: blue;
+      font-size: 12px;
+    }
+  </style>
+  <!-- 引入下载过的animate.css样式库，注意这里ref一定要加上 -->
+  <link rel="stylesheet" href="./assets/animate.min.css">
+</head>
+<body>
+
+  <div id="app">
+
+    <!-- 一、使用自定义动画 -->
+    <transition name='qf'>
+      <div v-if='bol1'>测试动画效果</div>
+    </transition>
+    <button @click='bol1=!bol1'>显示/隐藏</button>
+    <hr>
+
+    <!-- 二、使用第三方动画 -->
+    <transition
+      enter-active-class='animate__animated animate__fadeInUp'
+      leave-active-class='animate__animated animate__bounce'
+      mode='out-in'
+    >
+      <h1 key='1' v-if='bol2'>白天</h1>
+      <h1 key='2' v-else>黑夜</h1>
+    </transition>
+    <button @click='bol2=!bol2'>显示/隐藏</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script>
+    // 1、过渡动画 <transition>
+    // 作用：是Vue内置的一种动画方式，可以很方便地为元素显示隐藏或组件切换添加动画。
+    // 工作中使用动画，本质是一种用户体验的优化。
+    // 用法：把过渡动画抽象成两个过程（Enter进入动画、Leave离开动画）
+
+    // 如何自定义进入动画？.qf-enter / .qf-enter-active / .qf-enter-to  （动画名就叫做'qf'）
+    // 如何自定义离开动画？.qf-leave / .qf-leave-active / .qf-leave-to  （动画名就叫做'qf'）
+    // 注意：Vue过渡动画的终点是不会保留的，也就是说当动画结束后元素的样式决定于class/style样式。咱们定义动画时，特别注意.qf-enter-to和.qf-leave这两个类名，最好能够配合UI样式去定义。
+
+    // 2、使用第三方css动画（animate.css）
+    // 官网：https://animate.style/
+    // 用法：安装或引入第三方css动画库，使用enter-active-class指定进入动画，使用enter-active-class指定离开动画。
+
+    // 3、对多个元素执行动画时
+    // - 要给每个元素都加上唯一的key（key值不能重复），否则动画不生效。
+    // - <transition mode> 使用mode指定多个元素显示与隐藏的先后顺序，通常mode='out-in'离开动画先执行，进入动画后执行。
+
+    // 4、<transition-group>
+    // 作用：一般用于给列表添加分组动画，参见Vue官网。工作中一般很少自己写列表动画。
+
+    // 5、面试题
+    // Vue中怎么做动画？（内置组件<transition>）
+    // 说一下Vue动画怎么实现？（使用那6个钩子编写自定义动画、使用animate.css第三方动画）
+    // <transition>对多个元素执行动画时有什么要注意的？(加key、使用mode)
+
+    const app = new Vue({
+      data () {
+        return {
+          bol1: true,
+          bol2: true
+        }
+      }
+    })
+    app.$mount('#app')
+  </script>
+
+</body>
+</html>

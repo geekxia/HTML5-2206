@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+
+  输入：<input id='ipt' type="text" /><br>
+  输出：<h2 id='h2' style='display:inline-block;'></h2>
+  <hr>
+  <h1 id='h1'></h1>
+  <button id='btn'>自增</button>
+
+  <script>
+    // 1、解释几个重要概念
+
+    // 响应式reactive（当你get/set一个变量时，你可以“捕获”这个操作行为；就好比叫你一声，你会答应一样）
+    // 劫持（使用Object.defineProperty对data选项进行遍历并添加getter/setter钩子）
+    // touch（当指令第一次与声明式变量绑定时，第一次触发声明式变量的get钩子）
+    // 依赖收集（当第一次touch时，把当前声明式变量的更新方法watcher添加到dep依赖数组中）
+    // Watcher（与声明式变量对应的dom更新方法）
+    // re-render（当声明式变量被set时，Vue通知Watcher更新DOM，即重新渲染）
+
+    // 2、面试题：说一下Vue的响应式原理？
+
+    // 当vue组件被创建时，在生命周期的第一阶段，Vue使用Object.defineProperty()对data选项进行遍历劫持并添加get/set钩子；在生命周期第二阶段，指令第一次与声明式变量touch时，发生依赖收集，再调用当前组件的watcher第一次更新DOM，DOM视图就显示出来了。当声明式变量发生变化时，vue再次通知Watcher更新视图，这就是响应式（原理）。
+
+
+    // 这是data选项（普通的对象）
+    const data = {
+      name: '张三',
+      num: 1
+    }
+    // 这是vue组件实例
+    const app = {}
+
+    // 生命周期第一阶段（劫持，就是添加get/set）
+    Object.keys(data).forEach(k=>{
+      Object.defineProperty(app, k, {
+        get () {
+          console.log(`getter ${k}`)  // 'touch'
+          return data[k]
+        },
+        set (val) {
+          console.log(`setter ${k}`)  // notify
+          data[k] = val
+          Watcher(k) // 通知更新界面
+        }
+      })
+    })
+
+    // 专门用于依赖收集
+    const dep = {
+      name: [],  // 这些数组中放置是Watcher
+      num: []
+    }
+
+    // 生命周期第二阶段（挂载阶段，touch）
+    function init () {
+      // v-model='name'
+      dep['name'].push(() => {
+        document.getElementById('ipt').value = app.name  // get功能
+      })
+      // .lazy
+      document.getElementById('ipt').addEventListener('blur', ev => {
+        // set功能
+        app.name = ev.target.value
+      })
+      // v-text='name'
+      dep['name'].push(()=>{
+        document.getElementById('h2').innerText = app.name // get功能
+      })
+      // v-text='num'
+      dep['num'].push(()=>{
+        document.getElementById('h1').innerText = app.num  // get功能
+      })
+      // v-on:click=''
+      document.getElementById('btn').addEventListener('click', ()=>{
+        app.num++  // set
+      })
+      // 第一次更新DOM
+      Object.keys(dep).forEach(k=>Watcher(k))
+    }
+
+    function Watcher (k) {
+      dep[k].forEach(fn=>fn())
+    }
+
+    init()
+
+  </script>
+
+  <script>
+    var obj2 = {}
+    var a = 1
+    var b = 2
+    // 给obj2这个对象添加一个新属性a
+    Object.defineProperty(obj2, 'a', {
+      get () {
+        console.log(`有人访问了a`)
+        return a
+      },
+      set (val) {
+        console.log(`有人修改了a`)
+        a = val
+      }
+    })
+    // 给obj2这个对象添加一个新属性b
+    Object.defineProperty(obj2, 'b', {
+      get () {
+        console.log(`有人访问了b`)
+        return b
+      },
+      set (val) {
+        console.log(`有人修改了b`)
+        b = val
+      }
+    })
+  </script>
+
+  <script>
+    // 这种普通对象是不具备响应式的。
+    var obj1 = {
+      a: 1,
+      b: 2
+    }
+  </script>
+
+</body>
+</html>

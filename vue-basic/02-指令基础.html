@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    [v-cloak] { display: none; }
+    .a1 { color: red; }
+    .a2 { color: green; }
+    .a3 { color: blue; }
+    .f1 { font-size: 20px; }
+    .f2 { font-size: 30px; }
+    .f3 { font-size: 40px; }
+    .outer {
+      width: 200px;
+      height: 200px;
+      border: 1px solid red;
+    }
+    .inner {
+      width: 100px;
+      height: 100px;
+      border: 1px solid blue;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <div v-pre>
+      <h1 v-cloak v-once>{{ msg }}</h1>
+      <h1 v-text='msg' v-once></h1>
+    </div>
+    <!-- <h1 v-text='"年龄:"+age'></h1> -->
+    <!-- <h1 v-text='`年龄:${age}`'></h1> -->
+    <h1 v-cloak>{{ "年龄:"+age }}</h1>
+    <div v-html='content'></div>
+    <hr>
+
+    <!-- <h1 v-bind='{title: tt, class: "box"}'>教育</h1> -->
+    <!-- <h1 v-bind:title='tt'>教育</h1> -->
+    <h1 :title='tt'>教育</h1>
+    <hr>
+
+    <!-- <h1 :class='`${cc} ${ff}`'>测试动态样式</h1> -->
+    <!-- <h1 :class='[cc, (5>1 ? "f2" : "f1")]'>测试动态样式</h1> -->
+    <!-- <h1 :class='[`a${Math.ceil(Math.random()*3)}`]'>测试动态样式</h1> -->
+    <!-- <h1 :class='{a2: bol, f3: Math.random()>0.5}'>测试动态样式</h1> -->
+    <hr>
+
+    <!-- <h1 :style='`color:red;fontSize:20px`'>测试动态样式</h1> -->
+    <!-- <h1 :style='`color:red;fontSize:${num}px`'>测试动态样式</h1> -->
+    <!-- <h1 :style='[{color:"red", fontSize:num+"px"}, {opacity:op}]'>测试动态样式</h1> -->
+    <h1 :style='{color:"red", fontSize:`${num}px`, opacity:op}'>测试动态样式</h1>
+    <hr>
+
+    <div :style='{[pad]:`${num}px`, border:"1px solid red"}'>盒子</div>
+    <hr>
+
+    <button @click='handle'>点击</button>
+
+    <div class='outer' @click='outerClick'>
+      <div class="inner" @click.stop='innerClick'></div>
+    </div>
+
+    姓名:<input type="text" v-model.trim='todo' @keyup.enter='submit' /><br>
+    年龄:<input type="number" v-model.number='age2' /><br>
+    介绍:<textarea cols="30" rows="2" v-model.lazy.trim='desc'></textarea>
+    <hr>
+
+    <div v-for='(item, index) in todolist'>
+      <div :style='{background: (item.computed ? "red" : "transparent")}'>
+        <input type="checkbox" @click.prevent='transform(item,index)' />
+        <span v-text='item.task'></span>
+        <span>x</span>
+      </div>
+    </div>
+
+    <div v-for='(value, key, index) in info'>
+      <span v-text='index'></span>
+      :
+      <span v-text='key'></span>
+      :
+      <span v-text='value'></span>
+    </div>
+
+    <div v-for='(num, index) in 5'>
+      <span v-text='index'></span>
+      :
+      <span v-text='num'></span>
+    </div>
+    <hr>
+
+    <h1 v-show='bol2'>我是一个可有可无的人</h1>
+    <hr>
+
+    <h2 v-if='bol2'>我是一个可有可无的人</h2>
+    <hr>
+
+    <h1 v-if='row===0'>第一行</h1>
+    <h2 v-else-if='row===1'>第二行</h2>
+    <h3 v-else-if='row===2'>第三行</h3>
+    <h4 v-else>第四行</h4>
+
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script>
+    // 什么是指令？就是vue内置的一套“模板”（都是以v-*），用于在视图节点上动态绑定变量（表达式）的。指令实际上是DOM功能的抽象，所以指令实际上也是DOM操作。
+    // 指令的“值”是表达式，所以大家要理解什么是表达式。
+
+    // 1、文本类指令：{{}}文本插值、v-text、v-once、v-cloak、v-html
+    // {{}} 用于绑定节点的文本，它和v-text功能是一样的。区别是{{}}这种绑定值的方式会出现“{{}}一闪而过”的效果，建议使用v-cloak来解决。
+    // v-text 用于绑定节点的文件，在大多数时候，它和 {{}} 可以相互替换。
+    // v-once 用于指定节点的动态内容只绑定一次。当前节点中所对应的变量发生变化，视图不更新。一般情况下，v-once只能和{{}}一起用。
+    // v-once 和 v-cloak 都是不需要接收表达式来做为“值”
+    // v-html 用于绑定动态的html节点，相当于DOM中的 innerHTML。这个指令默认已经做了“防注入攻击XSS”的处理。
+
+    // 2、动态属性指令 v-bind
+    // v-bind 用于动态绑定节点的属性（比如title、value、class、style等）
+    // v-bind 用得非常多，所以经常简写成 :    <div :id='变量'></div>
+
+    // 动态class语法（一）：<div :class='`${变量1} ${变量2} `'></div>
+    // 动态class语法（二）：<div :class='[表达式1, 表达式2, ...]'></div>
+    // 动态class语法（三）：<div :class='{ 类名1: 布尔值1, 类名2: 布尔值2, ... }'></div>
+
+    // 动态style语法（一）：<div :style='`color:red;fontSize:20px`'></div>
+    // 动态style语法（二）：<div :style='[{css键值对}, {css键值对}, ...]'></div>
+    // 动态style语法（三）：<div :style='{css键值对}'></div>
+
+    // 3、事件绑定 v-on
+    // v-on 用于给视图节点绑定各种JS事件，比如click、mouseenter、blur、keyup等
+    // v-on 用得非常多,所以简写成 @  基本语法: <div @事件名.事件修饰符='事件处理器'></div>
+    // v-on 上可以使用事件修饰符:   .stop阻止冒泡   .prevent阻止默认事件  .enter绑定键盘Enter键盘....
+    // 事件对象与事件传参, 放在v-for中讲.
+
+    // 4、表单绑定 v-model
+    // v-model 用于表单取值(表单双向绑定), 比如input/select/textarea等
+    // 基本语法:  <input type="text" v-model.表单修饰符='变量'/>
+    // 三个修饰符:  .trim自动去除文本首尾空格  .number隐式类型转换变成Number类型  .lazy用于性能,当表单失焦时再进行双向绑定.
+    // v-model 还有更深的理解, 在组件化中进一步去理解.
+
+    // 5、列表渲染 v-for
+    // v-for 用于渲染列表、对象、Number变量等等.
+    // 当 v-for 渲染列表时, 语法是这样的  <div v-for='(item,index) in array'></div>
+    // 当 v-for 渲染对象时, 语法是这样的  <div v-for='(value,key,index) in obj'></div>
+    // 当 v-for 渲染Number变量时, 语法是这样的  <div v-for='(num, index) in 5'></div>
+    // 注意: v-for在循环渲染时要求加key, 为什么呢? 在响应式原理时再解释.
+
+    // 6、条件渲染 v-show / v-if / v-else-if / v-else
+    // v-show 用于显示或隐藏视图节点, 背后使用的 display:block / display:none 来实现的.
+    // v-if / v-else-if / v-else 用于显示或隐藏视图节点, 背后是真正地移除或插入视图节点.
+    // 说明: v-if 因为是节点插入或移除, 比较耗费性能; v-show只是通过样式来实现显示与隐藏, 性能开销更小.
+    // 说明: v-if, 不建议和 v-for 一起使用; 如果一定要在同一个节点上使用v-if和v-for, v-for优先级更好.
+
+    // 7、其它指令
+    // v-pre  用于调试，可以阻止vue编译器对指令的编译，生产工作中很少使用。
+    // v-slot 在讲组件化时再讲，用于指定具名插槽。
+
+    // 8、自定义指令
+    // 在vue开发中，除了可以使用这些内置指令外，我们还可以使用Vue.directive() 或 directives选项来自定义指令。
+
+    // 9、面试题
+    // 常用的vue指令有哪些？你怎么理解指令？
+    // v-if 和 v-show 有什么区别？
+    // 文本插值有“{{}}一闪而过”问题，怎么处理？
+    // v-for 可以循环哪些数据类型？v-for列表渲染时为什么加key？
+    // v-model 有哪些修饰符？
+    // vue 中怎么阻止冒泡？怎么阻止默认事件？怎么监听键盘enter键？
+    // 工作中你封装过自定义指令吗？举一些例子
+    // 其它。。（多翻阅面试题）
+
+    const app = new Vue({
+      el: '#app',
+      // 声明式变量
+      data: {
+        msg: 'HelloWorld',
+        age: 20,
+        content: '<a href="https://baidu.com">百度</a>',
+        tt: '千锋教育',
+        cc: 'a1',
+        ff: 'f1',
+        bol: true,
+        num: 20,
+        op: 1,
+        pad: 'paddingTop',
+        todo: '',
+        age2: 0,
+        desc: '',
+        todolist: [
+          { id: 1, task: '吃饭', computed: false },
+          { id: 2, task: '跑步', computed: false },
+          { id: 3, task: '学习', computed: false }
+        ],
+        info: {
+          name: '张三',
+          age: 20,
+          addr: '广东深圳'
+        },
+        bol2: true,
+        row: 0
+      },
+      methods: {
+        handle (ev) {
+          console.log('---clicked', ev)
+        },
+        outerClick (ev) {
+          console.log('---outer clicked')
+        },
+        innerClick (ev) {
+          console.log('---inner clicked')
+        },
+        submit (ev) {
+          console.log('---enter', this.todo)
+        },
+        transform (item, index) {
+          console.log('准备把当前这条任务变成已完成', item, index)
+          this.todolist[index].computed = true
+        }
+      }
+    })
+
+    // setInterval(()=> {
+    //   console.log('----desc', app.desc)
+    // }, 500)
+  </script>
+
+</body>
+</html>

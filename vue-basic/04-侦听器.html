@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+
+  <div id="app">
+    <h1 v-text='num'></h1>
+    <h1 v-text='total'></h1>
+    <hr>
+
+    <h1 v-text='info.child.age'></h1>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script>
+    // 1、侦听器（监听器） watch选项
+
+    // 作用：用于监听一个变量的变化，然后去做另一件事儿。
+
+    // 特点：当侦听器监听引用数据类型时，默认只能监听引用数据类型的第一层。为什么要这样？监听深度越深，Vue在背后要做的事儿越多，这是一种性能损耗，所以一般不要对一个引用类型的变量进行深度监听。
+
+    // 如何监听引用数据类型的每一层（深度监听）？侦听器语法这样写  info: { deep: true, handler() {} }
+    // 为了避免deep:true深度监听导致性能损耗，我们推荐这种写 'info.child.age' () {}
+
+    // 在Vue中，侦听器能够监听哪些性质的变量变化呢？能够监听data、计算属性、vuex数据、$route等，凡是那些带有__ob__变量都能被监听到。
+
+    // 2、面试题
+    // 什么是侦听器？有什么用？
+    // 侦听器能不能监听数组/对象的变化？（可以，但默认不监听深层）deep:true
+    // 侦听器为什么默认不支持深度监听？（性能优化）
+    // 如何监听一个对象中的某个属性变化？（deep:true, 推荐 'obj.key'这种监听写法）
+    // 侦听器能监听哪些变量变化？（data、computed、vuex、$route等）
+
+    const app = new Vue({
+      el: '#app',
+      data: {
+        num: 1,
+        info: {
+          name: '张三',
+          age: 35,
+          child: {
+            name: '李四',
+            age: 10
+          }
+        },
+        bol: true
+      },
+      computed: {
+        total () {
+          return this.num * 100
+        }
+      },
+      // 所有的监听器都定义在这里
+      watch: {
+        // 当num发生变化时，触发这个回调函数
+        // num (newNum, oldNum) {
+        //   console.log('---num变化了', newNum, oldNum)
+        // },
+
+        // 默认只能监听第一层
+        // info (newInfo, oldInfo) {
+        //   console.log('---info变化了', this.info)
+        // },
+
+        // 实现深度监听（这样写没问题，但理论上讲是不推荐的）
+        // info: {
+        //   deep: true,
+        //   handler (newInfo, oldInfo) {
+        //     console.log('---info变化了', this.info)
+        //   }
+        // },
+
+        // 推荐的写法
+        'info.child.age' (newAge, oldAge) {
+          console.log('---age变了', newAge, oldAge)
+        },
+
+        // 把handler定义成一个methods方法
+        bol: 'bolHandler',
+
+        // 监听计算属性的变化
+        total (newTotal, oldTotal) {
+          console.log('----计算属性total变化了', this.total)
+        },
+
+        // 监听vue-router的路由变化
+        // $route (newRoute, oldRoute) {
+        //   console.log('---路由变化了')
+        // }
+      },
+      methods: {
+        bolHandler () {
+          console.log('---bol变化了')
+        }
+      }
+    })
+  </script>
+
+</body>
+</html>

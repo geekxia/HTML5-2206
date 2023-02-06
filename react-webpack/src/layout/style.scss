@@ -1,0 +1,99 @@
+.qf-layout {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  &>.ant-layout {
+    height: 100%;
+  }
+
+  .ant-layout-sider {
+    position: relative;
+  }
+
+  .toggle {
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  .logo {
+    margin-top: 15px;
+    img {
+      display: block;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      margin: 0 auto;
+    }
+  }
+  .small {
+    img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+    }
+  }
+
+  .qf-header {
+    box-sizing: border-box;
+    padding-left: 25px;
+    padding-right: 20px;
+    .ant-breadcrumb {
+      color: white;
+      line-height: 64px;
+      display: inline-block;
+      margin-left: 20px;
+    }
+    .ant-breadcrumb-link {
+      color: white;
+    }
+    .ant-breadcrumb-link a {
+      color: white;
+    }
+    .ant-breadcrumb-separator{
+      color: white;
+    }
+
+    .icons {
+      .anticon {
+        font-size: 18px;
+        color: white;
+        cursor: pointer;
+        margin: 0 5px;
+      }
+    }
+  }
+
+  .setting {
+    position: fixed;
+    right: 0;
+    top: 50%;
+    margin-top: -24px;
+    width: 48px;
+    height: 48px;
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
+    color: white;
+    text-align: center;
+    line-height: 48px;
+    // z-index: 9999;
+    font-size: 18px;
+    cursor: pointer;
+  }
+
+  .ant-layout-content {
+    position: relative;
+    .qf-content {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      right: 20px;
+      bottom: 20px;
+      overflow: auto;
+    }
+    .qf-content::-webkit-scrollbar {
+      width: 0 !important
+    }
+  }
+}

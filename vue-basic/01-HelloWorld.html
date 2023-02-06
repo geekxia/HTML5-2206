@@ -1,0 +1,53 @@
+<html>
+  <head>
+    <title>HelloWorld</title>
+  </head>
+  <body>
+
+    <div id='app'>
+      <h1 v-text='msg'></h1>
+      <hr>
+      <h1 v-text='num'></h1>
+      <button v-on:click='add'>自增</button>
+      <hr>
+      <h1 v-bind:style='{ color: cc }'>我是变色龙</h1>
+      <button v-on:click='change'>变色</button>
+      <hr>
+      <h1 v-if='show'>我是一个可有可无的人</h1>
+      <button v-on:click='toggle'>显示/隐藏</button>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script>
+      // Vue2特点：MVVM框架、响应式（声明式）、组件化（支持自定义组件）、丰富的指令（DOM功能的抽象）、基于选项的（template、data、computed、watch、methods）、Vue文档集中（最好的教程）、Vue生态丰富且简单、渐近式的（可大可小的项目都能做）。
+
+      // DOM开发思想：当我们需要在交互事件中改变视图时，使用DOM选择器选中目标节点、再使用DOM方法直接改变视图。
+      // Vue开发思想：当我们需要在交互事件中改变视图时，先在data选项中声明一个合适的变量，再在交互事件中改变这个声明式变量即可，视图自动更新，这是一种间接的操作。
+
+      console.log('Vue', Vue)
+      const app = new Vue({
+        el: '#app',  // 把vue组件（响应式系统）挂载到真实DOM
+        // 是专门用于定义声明式变量的，这些声明式变量有什么特点？当声明式变量变化时，它所对应的视图节点自动更新。这就是所谓的响应式。
+        data: {
+          msg: 'HelloWorld',
+          num: 1,
+          cc: 'black',
+          show: true
+        },
+        // 是专门用于定义函数方法的地方。
+        methods: {
+          add () {
+            this.num++
+          },
+          change () {
+            this.cc = 'red'
+          },
+          toggle () {
+            this.show = !this.show
+          }
+        }
+      })
+    </script>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "qf-cate": "/components/cate/cate"
+  },
+  "navigationStyle": "custom",
+  "navigationBarTextStyle": "white"
+}

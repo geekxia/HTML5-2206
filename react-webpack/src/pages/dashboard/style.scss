@@ -1,0 +1,24 @@
+.dashboard {
+  box-sizing: border-box;
+
+  .one {
+    height: 100px;
+    background-color: white;
+    box-sizing: border-box;
+    margin: 20px;
+  }
+
+  .two {
+    background-color: white;
+    padding: 20px;
+    box-sizing: border-box;
+  }
+
+  .three {
+    height: 400px;
+    background-color: white;
+    margin: 20px 0;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+}

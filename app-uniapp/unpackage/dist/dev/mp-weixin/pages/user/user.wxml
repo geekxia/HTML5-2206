@@ -1,0 +1,1 @@
+<view> 个人中心 <button bindtap="{{a}}">跳转</button><view>{{b}}</view><button bindtap="{{c}}">自增</button></view>

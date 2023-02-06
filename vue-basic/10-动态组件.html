@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .tabbar {
+      height: 60px;
+      line-height: 60px;
+      display: flex;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+    .tabbar>span {
+      flex: 1;
+      border: 1px solid #ccc;
+      text-align: center;
+      cursor: pointer;
+    }
+    .tabbar>span.on {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <!-- <qf-home></qf-home>
+    <qf-friend></qf-friend>
+    <qf-user></qf-user> -->
+
+    <keep-alive :exclude='["qf-user"]'>
+      <component :is='page'></component>
+    </keep-alive>
+
+    <qf-tabbar v-model='page'></qf-tabbar>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script>
+    // <slot> <keep-alive> <component> <transition> <transition-group>
+
+    // 1、<keep-alive> 动态组件
+    // 作用：被<keep-alive>所包裹的组件不会“销毁”，你可以理解成是对组件的一种缓存。
+    // 被动态组件包裹过的组件多了两个生命周期钩子：activated(激活)、deactivated(休眠)
+    // 注意这两组钩子的区别和使用场景：activated(执行多次) - mounted(执行一次) 、 deactivated(执行多次) - beforeDestroy(执行一次)
+    // <keep-alive :include='["qf-home"]'>  包含在include数组中的组件不会“死”
+    // <keep-alive :exclude='["qf-home"]'>  不包含在exclude数组中的组件不会“死”
+
+    // 2、<component is='组件名'>
+    // 作用：有种v-if的感觉，根据指定条件渲染目标组件，它的is属性等于哪个组件，就显示哪个组件。
+    // 场景：它经常配合<keep-alive>一起使用。
+
+    // 3、面试题
+    // 在Vue中实现条件渲染渲染有哪些办法？v-if / v-show / <component is>
+    // 什么是动态组件？<keep-alive include exclude> 还有两个新的生命周期钩子
+    // mounted和activated有什么区别？deactivated和beforeDestroy有什么区别？（执行次数、使用场景）
+    // Vue有哪些内置组件？（插槽、动态组件、过渡动画、<component>）
+    // 哪些场景下你会用到动态组件？
+
+    const Home = {
+      template: `
+        <div>
+          <h1>首页</h1>
+          <input type="text" v-model='a' />
+        </div>
+      `,
+      data() {
+        return {
+          a: 1
+        }
+      },
+      mounted () {
+        console.log('---首页mounted')
+      },
+      activated () {
+        console.log('---首页激活')
+      },
+      deactivated () {
+        console.log('---首页休眠')
+      },
+      beforeDestroy () {
+        console.log('---首页销毁')
+      }
+    }
+
+    const Friend = {
+      template: `
+        <div>
+          <h1>好友</h1>
+          <input type="text" v-model='b' />
+        </div>
+      `,
+      data() {
+        return {
+          b: 1
+        }
+      }
+    }
+
+    const User = {
+      template: `
+        <div>
+          <h1>个人中心</h1>
+          <input type="text" v-model='c' />
+        </div>
+      `,
+      data() {
+        return {
+          c: 1
+        }
+      }
+    }
+
+    Vue.component('qf-tabbar', {
+      template: `
+      <div class='tabbar'>
+        <span v-for='item in list' v-text='item.label' @click='$emit("input",item.tab)' :class='{on:item.tab===value}'></span>
+      </div>
+      `,
+      props: {
+        value: { type: String, default: '' }
+      },
+      data () {
+        return {
+          list: [
+            { id:1, tab:'qf-home', label:'首页' },
+            { id:2, tab:'qf-friend', label:'好友' },
+            { id:3, tab:'qf-user', label:'我的' }
+          ]
+        }
+      }
+    })
+
+    const app = new Vue({
+      components: {
+        'qf-home': Home,
+        'qf-friend': Friend,
+        'qf-user': User
+      },
+      data () {
+        return {
+          page: 'qf-home'
+        }
+      }
+
+    })
+    app.$mount('#app')
+  </script>
+</body>
+</html>

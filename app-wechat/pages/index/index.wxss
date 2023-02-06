@@ -1,0 +1,28 @@
+/**index.wxss**/
+
+.container {
+  color: red;
+  font-size: 80rpx;
+}
+
+.box { color: red;}
+.wrap {
+  border: 1rpx solid blue;
+}
+.name {
+  line-height: 120rpx;
+  height: 120rpx;
+  border: 1rpx solid #cccccc;
+  padding-left: 30rpx;
+}
+
+.foo {
+  width: 375rpx;
+  height: 375rpx;
+  border: 1rpx solid red;
+  margin: 0 auto;
+}
+
+.tabbar {
+  height: 1000rpx;
+}

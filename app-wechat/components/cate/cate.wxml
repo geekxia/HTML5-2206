@@ -1,0 +1,10 @@
+<view class="cate">
+  <view 
+    wx:for="{{cates}}" 
+    wx:key="*this" 
+    class="{{value==item.value?'on':''}}" 
+    data-cate='{{item.value}}'
+    bindtap="changeCate">
+    {{item.label}}
+  </view>
+</view>

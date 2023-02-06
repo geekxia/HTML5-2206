@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .score {
+      display: flex;
+      line-height: 30px;
+      align-items: center;
+      font-size: 14px;
+    }
+    .score>span {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      background: url('./assets/score.png') center center / 16px 16px;
+      cursor: pointer;
+    }
+    .score>span.on {
+      background: url('./assets/score-on.png') center center / 16px 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <!-- 自定义属性，要在子组件的props中接收 -->
+    <!-- 自定义事件，用于接收子组件回传回来的数据，在指令表达式中$event就表示事件对象 -->
+    <qf-score :value='num' @input='num=$event'>
+      配送速度：
+    </qf-score>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+  <script>
+    // 1、怎么理解组件化？
+
+    // 组件是HTML的扩展，使用粒度较小的HTML元素封装成粒度更大的标签（Vue组件）。
+    // 自定义组件技术，是MVVM框架中最重要的技术之一，可以实现快速开发、代码复用、提升可维护性。
+
+    // 2、如何自定义组件（**细节**）？
+
+    // 一个组件，你可以理解成是由一组选项构成的。在封装自定义组件时，你可以使用大多数的Vue选项属性，比如data、template、methods等。
+    // 组件封装后，必须要注册（局部注册，或，全局注册）才能在Vue的地盘中使用。注册自定义组件时，组件名称名称必须由多个单词用中划线连接。
+    // 对一个组件来讲，最重要的选项是 template选项，用于指定组件的视图结构，在视图结构中你可以使用任意指令。
+    // 对一个组件来讲，你可以使用 props选项，用于接收父组件传递过来的自定义属性，在组件内部用this访问它们。
+    // 对一个组件来讲，你可以使用 this.$emit('自定义事件', '数据')触发父组件给的自定义事件，并回传数据给父组件。
+    // 注意：关于语法细节问题，老师讲过，或者你在官方文档见过，你可以用。不要随意“创造”语法。
+
+    // 当子组件定义声明式变量，也使用的是data选项，需要注意的是这里的 data(){return { num: 1 }}，因为组件会被复用，为了保证data的独立性。只有 new Vue({})根组件中的data: {}。
+
+    // 3、如何进行组件注册？
+    // 全局注册：Vue.component('xx-yy', '原材料选项')   全局注册的组件，一次注册，在任何其它组件中都可以使用。
+    // 局部注册：components: { 'xx-yy': '原材料选项' }  局部注册的组件，只能在当前组件作用域中使用。
+    // 需要注意的是，注册组件时，组件名称名称必须由多个单词用中划线连接。
+
+    // 4、关于组件间关系与通信
+    // 约定：在MVVM框架，当我们谈论“组件”这个概念时，通常指是自定义组件。当在A组件的视图结构中使用到了B组件，这就形成了组件关系（父子组件），那么A就是B组件的父组件，B就是A的子组件。当组件足够多时，组件间关系就会形成“组件树”。
+
+    // 通信：在Vue中，所谓“通信”就是组件之间的数据交互。父组件向子组件通信，使用自定义属性，在子组件使用props接收；子组件向父组件通信，使用自定义事件，在子组件中使用 this.$emit('自定义事件', '数据') 回传数据。
+
+    // 5、组件化的三大技术
+    // 自定义属性  <qf-score :num='num' count='1'></qf-score>
+    // 自定义事件  <qf-score @change='' @click=''></qf-score>
+    // 自定义插槽  <qf-score> <div #default></div> </qf-score>
+    // 组件封装：使用自定义属性、自定义事件、自定义插槽这三大技术实现组件化。
+  </script>
+
+  <!-- 评分组件的视图结构，在视图模板中不要使用this -->
+  <!-- <slot /> 是Vue内置的一个全局组件，表示插槽 -->
+  <script type="x-template" id='score'>
+    <div class='score'>
+      <slot name='default'></slot>
+      <span v-for='i in 5' :class='{on: value>=i}' @click='$emit("input", i)'></span>
+      <slot name='xxx'></slot>
+    </div>
+  </script>
+
+  <script>
+    // 组件原材料（视图、自定义属性、methods事件、this.$emit()）
+    const score = {
+      // 指定当前组件的视图结构
+      template: '#score',
+      // 用于接收父组件传递过来的自定义属性，用this访问它们
+      props: {
+        value: { type: Number, default: 0 }
+      },
+      // methods: {
+      //   change (i) {
+      //     // 如果在这里能让父组件中的num更新，那么分数界面就会变化
+      //     this.$emit('input', i)
+      //   }
+      // }
+    }
+
+    // 根组件（实例对象）
+    const app = new Vue({
+      el: '#app',
+      data: {
+        num: 1
+      },
+      // 局部注册组件
+      components: {
+        // 左侧key是组件名，必须由多个单词用中划线连接
+        // 右边值，是注册组件的原材料（选项）
+        'qf-score': score
+      },
+      // methods: {
+      //   change (ev) {
+      //     console.log('---收到了score子组件回传的数据', ev)
+      //     this.num = ev
+      //   }
+      // }
+    })
+
+  </script>
+
+</body>
+</html>

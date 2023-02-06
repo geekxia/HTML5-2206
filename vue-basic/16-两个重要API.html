@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+
+  <div id='app'>
+    <h1 v-text='num' id='h1'></h1>
+    <button @click='add'>自增</button>
+    <hr>
+    <div v-html='content'></div>
+    <hr>
+
+    <h1 v-text='info.user.children[0].age'></h1>
+    <button @click='change'>变化</button>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script>
+    // 1、Vue.nextTick() / this.$nextTick()
+    // 事实：set操作，代码确实是同步的，但是set行为是异步的；set操作修改声明变量，触发re-render生成新的虚拟DOM，进一步执行diff运算，找到脏节点集合，交给Vue背后的更新队列去执行循环更新。
+    // 什么是nextTick？在更新队列中每一个更新任务都是一个更新单元，nextTick表示下一个更新单元（更新周期）。
+    // 作用：这么描述一个场景，我们set操作data（更新DOM），你希望访问这个DOM的最新状态时，使用this.$nextTick(handler)。
+    // nextTick() 是某种程度（场景）下，可以使用 updated() 来替代；原则上建议使用 nextTick()。
+
+    // 2、this.$forceUpdate()
+    // 事实：Vue响应式是有缺陷的，什么缺陷？在复杂的Vue应用中，如果声明式变量是引用数据类型，当你set操作这些复杂的引用数据类型时，视图不更新。解决方案，set操作完成后，立即调用 this.$forceUpdate()强调更新（强制re-render）。
+    // 有时候，this.$forceUpdate()也无法解决上述问题，对set操作的变量进行一行深复制。
+
+    // 3、面试题
+    // 谈一谈你对 Vue.nextTick() 的理解？有什么用？（在nextTick访问最新的DOM）
+    // nextTick() 和 updated() 的区别 （前者只是表示一个更新单元已完成，后者是生命周期钩子表示整个页面更新完成）
+    // Vue响应式有没有缺陷呢？有什么缺陷？遇到这种问题你会怎么办？
+    // 什么是深拷贝？什么是浅拷贝？有哪些深拷贝的方法？让你手写一个深拷贝方法，你会怎么写？
+
+    const app = new Vue({
+      el: '#app',
+      data () {
+        return {
+          num: 1,
+          content: '',
+          info: {
+            user: {
+              children: [
+                { name: '张三', age: 10 }
+              ]
+            }
+          }
+        }
+      },
+      mounted () {
+        // 模拟调接口
+        setTimeout(()=>{
+          const res = '<div><a id="a" href="https://baidu.com">百度</a></div>'
+          this.content = res
+          // 上面这个set行为异步更新完成后，执行nextTick的回调
+          Vue.nextTick(()=>{
+            document.getElementById('a').style.color = 'black'
+          })
+        }, 200)
+      },
+      methods: {
+        add () {
+          this.num++
+          this.num++
+          this.$nextTick(()=>{
+            const tt = document.getElementById('h1').innerText
+            console.log('--tt', tt)
+          })
+        },
+        change () {
+          this.info.user.children[0].age++
+          // this.$forceUpdate()
+          // this.info = JSON.parse(JSON.stringify(this.info))
+          // this.info = _.cloneDeep(this.info)
+        }
+      }
+    })
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+
+  <div id='app'>
+    <h1 v-text='num'></h1>
+    <button @click='add'>自增</button>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+
+  <script>
+    // 1、生命周期（组件从“生”到“死”的全过程）
+
+    // 创建阶段：beforeCreate、created(**)
+    // 挂载阶段：beforeMount、mounted(**)
+    // 更新阶段：beforeUpdate、updated
+    // 销毁阶段：beforeDestroy(**)、destroyed
+
+    // 与动态组件有关的两个特殊的钩子：activated(激活)、deactivated(休眠)
+    // 与组件异常捕获有关的一个钩子：errorCaptured
+
+    // 2、什么MVVM框架？
+    // MVVM流程 : M数据层 -> VM虚拟DOM层 -> V视图层
+    // 网页本质 = M数据层 + V视图结构
+    // M+V是怎么组装的？（ MVC  MVP  MVVM）
+    // M+V在哪儿组装？（前后端分离、前后端不分离、SSR服务端渲染）
+    // 进一步理解（阮一峰博客）：https://www.ruanyifeng.com/blog/2015/02/mvcmvp_mvvm.html
+
+    // 3、面试题
+    // Vue常用的生命周期有哪些？（4*2+2+1）
+    // 在创建/挂载/更新/销毁阶段，Vue在背后分别做了些什么事儿？
+    // 响应式原理，发生在Vue哪些生命周期阶段？
+    // 虚拟DOM，在哪些阶段生成的？
+    // 哪些生命周期钩子可以执行多次？哪些执行一次？
+    // 什么虚拟DOM？（是一个很大的JSON数据，用于描述视图模板的，保存在内存中）
+    // 虚拟DOM存在的价值点在哪里？（更新，把DOM更新粒度降到最低，规避人为DOM滥操作）
+    // 什么diff运算？（在更新阶段，patch对新旧虚拟DOM进行对比，找出脏节点，提交更新）
+    // 谈一谈你对 MVVM、MVC、MVP的理解？
+    // 等等，还有很多与生命周期有关的面试题。。。。
+
+
+
+    const app = new Vue({
+      data () {
+        return {
+          num: 1
+        }
+      },
+      watch: {
+        num () {
+          console.log('--- num changed')
+        }
+      },
+      // 声明methods方法
+      // 声明生命周期钩子
+      beforeCreate () {
+        console.log('---beforeCreate')
+        // 几乎不用它
+      },
+      // inject（注入）provide数据
+      // 响应式劫持、把data上数据遍历后放在this上
+      created () {
+        console.log('---created')
+        // 调接口
+      },
+      // 通过el/$mount/template找视图模板
+      // 把template视图模板编译成render() (render方法是用于创建虚拟DOM的)
+      beforeMount () {
+        console.log('---beforeMount')
+        // 几乎用不到
+      },
+      // 创建$el挂载节点
+      // 调用render()方法第一次生成虚拟DOM（Vnode是对真实视图结构的一种数据描述）
+      // Vue开始编译工作，循环递归，指令和声明式变量进行touch，依赖收集、通知Watcher第一次完成DOM渲染
+      mounted () {
+        console.log('---mounted')
+        // 调接口、开定时器、建立websocket长连接、echarts图表实例化、DOM/BOM操作。。。
+      },
+      // 网页呈现你的面前上，当各种事件交互触发data变化时
+      beforeUpdate () {
+        console.log('---beforeUpdate')
+        // 几乎用不到
+      },
+      // 再次调用render()方法生成新的虚拟DOM（现在就有了两个虚拟DOM）
+      // 执行patch运算（diff运算）找出两个虚拟DOM之间的最小差异（脏节点集合），通过一个队列进行异步更新。
+      updated () {
+        console.log('---updated')
+        // updated在某些场景下，可以模拟出watch/$nextTick()的功能。
+        // 不常用，但有时也非常有用
+      },
+      // 当调用$destroy()或路由切换时，即将进入销毁阶段
+      beforeDestroy () {
+        console.log('---beforeDestroy')
+        // 清除定时器、清除缓存
+      },
+      // 移除当前组件的Watcher（DOM将无法再更新了）
+      // 拆卸掉所有的子组件
+      // 移除事件监听器（wacth等等）
+      destroyed () {
+        console.log('---destroyed')
+        // 几乎用不到
+      },
+      methods: {
+        add () {
+          console.log('---add')
+          this.num++
+        }
+      }
+    })
+    app.$mount('#app')
+  </script>
+</body>
+</html>

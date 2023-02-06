@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+
+  <div id="app">
+    <h1 v-color='"#ff0000"'>测试</h1>
+    <h1 v-color='"blue"'>测试</h1>
+    <h1 v-color='cc'>测试</h1>
+
+    <input type="text" v-form.lazy.trim.upper='name' />
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script>
+    // 1、自定义指令
+    // 什么指令？指令本质上就是DOM功能的一种抽象封装。
+    // 什么是自定义指令？当你在项目中有一些常用的DOM功能要复用时，建议封装成指令，这就是自定义指令。
+
+    // 全局指令：使用 Vue.directive('指令名', fn/{})定义全局指令，在任何组件中都能使用。
+    // 局部指令：使用 directives: {} 定义局部指令，只能在当前组件中使用。
+
+    // 2、面试题
+    // 常用指令有哪些？你怎么理解指令？你工作是否自已封装过指令？
+    // 举一个你封装自定义指令的例子（权限指令、拖拽指令）
+    // 推荐8个常用指令（项目经验）：https://zhuanlan.zhihu.com/p/337659611
+
+    Vue.directive('form', {
+      bind (el, binding, vnode) {
+        // console.log('---el', el)
+        // console.log('---binding', binding)
+        // console.log('---vnode', vnode)
+        const { context } = vnode
+        const { expression, modifiers } = binding
+        const { lazy, trim, number, upper } = modifiers
+        // v-bind:value
+        el.value = context[expression]
+        // v-on:input
+        el.addEventListener(lazy?'blur':'input', function(ev){
+          // console.log('---事件', ev.target.value)
+          let val = ev.target.value
+          if (trim) val = val.trim()
+          if (number) val = Number(val)
+          if (upper) val = val.toUpperCase()
+          context[expression] = val  // 必须使用上下文来双向绑定
+        })
+      },
+      update (el, binding, vnode) {
+        el.value = vnode.context[binding.expression]
+      }
+    })
+
+    const app = new Vue({
+      el: '#app',
+      data: {
+        cc: 'green',
+        name: '张三'
+      },
+      directives: {
+        // fn写法，等价于 bind + update这两个钩子
+        'color': function (el, binding, vnode) {
+          // console.log('---el', el)
+          // console.log('---binding', binding)
+          // console.log('---vnode', vnode)
+          el.style.color = binding.value
+        },
+
+        // 'color': {
+        //   bind (el, binding) {
+        //     el.style.color = binding.value
+        //   },
+        //   update (el, binding) {
+        //     el.style.color = binding.value
+        //   },
+        //   inserted () {
+        //     console.log('---inserted')
+        //   }
+        // }
+      }
+    })
+
+    // setInterval(()=>{
+    //   console.log('---name', app.name)
+    // }, 1000)
+  </script>
+
+</body>
+</html>

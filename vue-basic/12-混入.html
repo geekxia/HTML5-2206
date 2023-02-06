@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body>
+
+  <div id="app">
+    <qf-home></qf-home>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script>
+    // 1、混入
+    // 作用：我们都知道vue组件是由若干选项组成的，混入用于向组件中混入可复用的选项。
+    // 全局混入：使用 Vue.mixin({选项})进行全局混入，所有组件都拥有了这些被混入的选项。
+    // 局部混入：使用mixins:[{},{}]选项进行局部混入，只有当前组件才有这些被混入的选项。
+
+    // 当一个组件同时有全局混入、局部混入、自有选项时，它们的优先级满足：自有选项 > 局部混入 > 全局混入。
+    // 结论：无论是全局混入、还是局部混入，都解决的是选项的复用问题。
+
+    // 2、关于混入
+    // 注意：工作中尽量不要使用全局混入，偶尔会用到局部混入。
+    // 混入缺点：当混入用得多了，选项“来历不明”，代码不易维护。
+
+    // 3、面试题
+    // 什么是混入？有什么用？（Vue.mixin()全局混入   mixins:[]局部混入）（对选项进行复用）
+    // 你用混入解决过什么问题？（注入埋点方法、Echarts图表封装）
+
+    // 全局混入（data、methods、生命周期钩子）
+    Vue.mixin({
+      data () {
+        return {
+          version: 'v2',
+          name: 'cc'
+        }
+      },
+      methods: {
+        maindian (id) {
+          console.log('---调接口埋点', id)
+        }
+      },
+      created () {
+        console.log('---created')
+      }
+    })
+
+    const aa = {
+      data () {
+        return {
+          name: 'aa'
+        }
+      },
+      mounted () {
+        console.log('---mounted aa')
+      }
+    }
+
+    const bb = {
+      data () {
+        return {
+          name: 'bb'
+        }
+      },
+      mounted () {
+        console.log('---mounted bb')
+      }
+    }
+
+    Vue.component('qf-home', {
+      template: `
+        <div>首页{{version}}</div>
+      `,
+      data () {
+        return {
+          num: 1,
+          name: 'dd'
+        }
+      },
+      // 局部混入
+      mixins: [aa, bb],
+      mounted () {
+        this.maindian(100)
+        console.log('---name', this.name)
+      }
+    })
+
+    const app = new Vue({
+      el: '#app'
+    })
+  </script>
+
+</body>
+</html>

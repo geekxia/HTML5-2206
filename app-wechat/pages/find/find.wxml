@@ -1,0 +1,5 @@
+<view>
+  <view wx:for='{{list}}' wx:key='*this'>
+    <view class="row">{{item.title}}</view>
+  </view>
+</view>

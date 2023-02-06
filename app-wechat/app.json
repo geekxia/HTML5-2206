@@ -1,0 +1,29 @@
+{
+  "pages": [
+    "pages/cart/cart",
+    "pages/shop/shop",
+    "pages/user/user",
+    "pages/find/find",
+    "pages/index/index"    
+  ],
+  "subpackages": [
+    {
+      "root": "packageA",
+      "pages": [
+        "pages/cart/cart"
+      ]
+    }
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#ff0000",
+    "navigationBarTitleText": "千锋"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "permission": {
+    "scope.userLocation": {
+      "desc": "为了提供更好的产品服务，我们请求使用你的当前位置"
+    }
+  }
+}

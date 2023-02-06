@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script type="text/javascript">
+    console.log('在这里引入移动端布局rem.js')
+  </script>
+</head>
+<body>
+
+  <h1>伪代码演示微信公众号开发</h1>
+
+  <!-- 公众号开发，和普通H5开发有什么区别？
+  前者可以使用 jssdk(wxsdk)，借助微信APP实现一些原生功能（地理定位、拍照、支付） -->
+
+  <!-- 第1步：在“公众号后台”配置“JS接口安全域名”（开发环境不需要） -->
+
+  <!-- 第2步，接入jssdk -->
+  <script src='https://res2.wx.qq.com/open/js/jweixin-1.6.0.js'></script>
+  <script>
+    console.log('jsskd接入成功', wx)
+    // 第3步：三端验证
+    // 使用axois调接口
+    wx.config({
+      debug: true,
+      appId: '',
+      timestamp: '',
+      nonceStr: '',
+      signature: '',
+      jsApiList: [
+        'getLocation'
+      ]
+    })
+    // 第4步：三端验证成功，并且jssdk环境已经准备好了
+    wx.ready(function() {
+      console.log('jssdk ready')
+    })
+  </script>
+  <script>
+    wx.getLocation({
+      success(res) {
+        console.log('用户位置', res)
+      },
+      fail(err) {
+        console.log('获取定位失败', err)
+      }
+    })
+  </script>
+
+
+</body>
+</html>

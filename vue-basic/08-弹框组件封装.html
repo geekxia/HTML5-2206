@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    .layer {
+      background: rgba(0,0,0,.6);
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
+    }
+    .modal {
+      position: absolute;
+      top: 100px;
+      left: 50%;
+      width: 520px;
+      margin-left: -260px;
+      border-radius: 3px;
+      background: white;
+    }
+    header {
+      line-height: 50px;
+      box-sizing: border-box;
+      padding: 0 20px;
+      font-size: 14px;
+      overflow: hidden;
+      border-bottom: 1px solid #eee;
+    }
+    .title {
+      float: left;
+    }
+    .close {
+      float: right;
+      cursor: pointer;
+    }
+    main {
+      box-sizing: border-box;
+      padding: 20px;
+      font-size: 14px;
+    }
+    footer {
+      line-height: 50px;
+      border-top: 1px solid #eee;
+      overflow: hidden;
+      height: 51px;
+    }
+    footer>span {
+      float: right;
+      height: 30px;
+      line-height: 28px;
+      margin-right: 20px;
+      cursor: pointer;
+      display: inline-block;
+      padding: 0 20px;
+      font-size: 12px;
+      margin-top: 10px;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+    }
+    footer>span.primary {
+      border-color: blue;
+      background: blue;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="app">
+    <button @click='show=true'>修改</button>
+    <qf-modal title='用户名修改' @close='onClose' @submit='onSubmit' :show='show'>
+      <template #default>
+        <div>
+          <span>用户名：</span>
+          <input type="text" v-model='name' />
+        </div>
+      </template>
+      <template #close>
+        <span class='close' @click='onClose'>Y</span>
+      </template>
+    </qf-modal>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script type="x-template" id='modal'>
+    <div class='layer' v-if='show'>
+      <div class='modal'>
+        <header>
+          <span class='title' v-text='title'></span>
+          <!-- 具名插槽 -->
+          <slot name='close'>
+            <span class='close' @click='$emit("close")'>X</span>
+          </slot>
+        </header>
+        <main>
+          <slot>
+            <div>主体区域</div>
+          </slot>
+        </main>
+        <footer>
+          <span class='primary' @click='$emit("submit")'>确定</span>
+          <span @click='$emit("close")'>取消</span>
+        </footer>
+      </div>
+    </div>
+  </script>
+  <script>
+    // 封装弹框组件
+    Vue.component('qf-modal', {
+      template: '#modal',
+      props: {
+        title: { type: String, default: '标题' },
+        show: { type: Boolean, default: false }
+      }
+    })
+
+    const app = new Vue({
+      el: '#app',
+      data: {
+        name: '',
+        show: false
+      },
+      methods: {
+        onClose () {
+          console.log('---关闭')
+          this.show = false
+          this.name = ''
+        },
+        onSubmit () {
+          console.log('---提交', this.name)
+          this.name = ''
+        }
+      }
+    })
+  </script>
+
+
+</body>
+</html>

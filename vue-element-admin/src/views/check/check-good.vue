@@ -1,0 +1,230 @@
+<template>
+  <div class="good-list">
+
+    <!-- 表格 -->
+    <el-table
+      :data="list"
+      style="width:100%; marginTop:20px;"
+      border
+      highlight-current-row
+      @sort-change="tableSortChange"
+    >
+      <el-table-column
+        label="序号"
+        align="center"
+        sortable="custom"
+        prop="id"
+        :sort-method="(a,b)=>(a.id-b.id)"
+        width="120"
+      >
+        <template slot-scope="{row, $index}">
+          <div>{{ $index+1 }}</div>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        prop="name"
+        label="商品"
+        align="center"
+      >
+        <template slot-scope="{row}">
+          <div class="good">
+            <img :src="(`http://localhost:9999${row.img}`)">
+            <div>{{ row.name }}</div>
+          </div>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        prop="price"
+        label="价格"
+        align="center"
+      >
+        <template slot-scope="{row}">
+          <div>{{ `￥${row.price.toFixed(2)}` }}</div>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        prop="cate"
+        label="品类"
+        align="center"
+      >
+        <template slot-scope="{row}">
+          <div>{{ cate2ZH(row.cate) }}</div>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        prop="hot"
+        label="是否热销"
+        align="center"
+      >
+        <template slot-scope="{row}">
+          <div>{{ row.hot?'是':'否' }}</div>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        prop="create_time"
+        label="发布时间"
+        align="center"
+      >
+        <template slot-scope="{row}">
+          <div>{{ row.create_time | time }}</div>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        prop="check_status"
+        label="商品状态"
+        align="center"
+      >
+        <template slot-scope="{row}">
+          <div>{{ row.check_status?'已上架':'待审核' }}</div>
+        </template>
+      </el-table-column>
+
+      <el-table-column
+        prop="address"
+        label="操作"
+        align="center"
+        width="230"
+      >
+        <template slot-scope="{row}">
+          <el-button size="mini" @click="rowHandle(2)">详情</el-button>
+          <el-button v-permission="[&quot;admin&quot;]" type="success" size="mini" @click="rowHandle(3, row)">审核</el-button>
+        </template>
+      </el-table-column>
+
+    </el-table>
+
+    <el-pagination
+      style="marginTop:20px;"
+      :current-page="page"
+      :page-sizes="[2, 5, 10, 20]"
+      :page-size="size"
+      layout="total, sizes, prev, pager, next, jumper"
+      background
+      :total="total"
+      @current-change="pageChange"
+      @size-change="sizeChange"
+    />
+  </div>
+</template>
+
+<script>
+// import CateSelect from './components/CateSelect.vue'
+import { getCheckGoodList, checkGood } from '@/api/good'
+import { mapState } from 'vuex'
+
+// cnpm i moment -S
+import moment from 'moment'
+
+export default {
+  // components: { CateSelect },
+  // 局部过滤器
+  filters: {
+    time(value) {
+      // do something
+      return moment(value).format('MM月DD日 HH:mm')
+    }
+  },
+  data() {
+    return {
+      list: [],
+      total: 0,
+      size: 10, // 表示每次向后端请求几条数据
+      page: 1, // 表示分页的页码
+      cate: '', // 品类
+      name: '', // 模糊查询
+      count: 0 // 计数器
+    }
+  },
+  computed: {
+    ...mapState('good', ['cates'])
+  },
+  watch: {
+    count() {
+      this.getList()
+    }
+  },
+  mounted() {
+    this.getList()
+  },
+  methods: {
+    getList() {
+      const params = {
+        page: this.page,
+        size: this.size,
+        cate: this.cate,
+        name: this.name
+      }
+      getCheckGoodList(params).then(res => {
+        console.log('----商品列表', res)
+        if (res.data && res.data.list) {
+          this.list = res.data.list
+          this.total = res.data.total
+        }
+      })
+    },
+    cate2ZH(cate) {
+      const res = this.cates.filter(ele => ele.cate === cate)
+      if (res.length === 1) {
+        return res[0].cate_zh
+      } else {
+        return ''
+      }
+    },
+    // 当表格列的排序发生变化时，在这里调接口处理数据
+    tableSortChange(ev) {
+      console.log('--- table sort change', ev)
+    },
+    pageChange(page) {
+      console.log('---页码变了', page)
+      //
+      this.page = page
+      this.count++
+    },
+    // 发现了一个规律：当size变化时，会导致page的变化。
+    sizeChange(size) {
+      console.log('---Size变了', size)
+      this.size = size
+      if (this.page === 1) {
+        this.count++
+      }
+    },
+    panelHandle(flag) {
+      if (flag === 1) {
+        this.count++
+      } else if (flag === 2) {
+        this.$router.push('/good/add')
+      } else if (flag === 3) {
+        console.log('---导出')
+      }
+    },
+    rowHandle(flag, row) {
+      if (flag === 3) {
+        checkGood(row._id).then(res => {
+          this.count++
+        })
+      }
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.good-list {
+  box-sizing: border-box;
+  padding: 20px;
+  .good {
+    text-align: center;
+    img {
+      display: inline-block;
+      width: 60px;
+      height: 60px;
+    }
+  }
+}
+</style>

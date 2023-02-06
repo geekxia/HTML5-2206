@@ -1,0 +1,7 @@
+{
+    "desc": "IT培训 HTML5 Java 大数据",
+    "rules": [{
+    "action": "allow",
+    "page": "*"
+    }]
+}

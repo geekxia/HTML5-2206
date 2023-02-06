@@ -1,0 +1,1 @@
+{"version":3,"file":"js/571.b187429c.js","mappings":"4GAAe,SAAS,IACtBA,QAAQC,IAAI,SACb,C","sources":["webpack://react-webpack/./src/utils/dog.js"],"sourcesContent":["export default function () {\r\n  console.log('---dog')\r\n}\r\n"],"names":["console","log"],"sourceRoot":""}

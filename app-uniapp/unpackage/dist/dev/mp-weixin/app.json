@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "pages/user/user",
+    "pages/index/index"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "千锋",
+    "navigationBarBackgroundColor": "#00ff00",
+    "backgroundColor": "#F8F8F8"
+  },
+  "usingComponents": {},
+  "sitemapLocation": "sitemap.json"
+}

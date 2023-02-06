@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style media="screen">
+    .map {
+      width: 500px;
+      height: 300px;
+    }
+  </style>
+  <script type="text/javascript" src="https://api.map.baidu.com/api?v=3.0&type=webgl&ak=QGia8zSd1GfTKCztRDZHTed9geETG6em"></script>
+</head>
+<body>
+
+  <div class="map" id="map"></div>
+
+  <script>
+    var map = new BMapGL.Map('map');
+
+    map.centerAndZoom(new BMapGL.Point(116.331398,39.897445), 12);
+    //创建地址解析器实例
+    var myGeo = new BMapGL.Geocoder();
+    // 将地址解析结果显示在地图上，并调整地图视野
+    // myGeo.getPoint('北京市海淀区上地10街', function(point){
+    //     if(point){
+    //         map.centerAndZoom(point, 16);
+    //         map.addOverlay(new BMapGL.Marker(point, {title: '北京市海淀区上地10街'}))
+    //     }else{
+    //         alert('您选择的地址没有解析到结果！');
+    //     }
+    // }, '北京市')
+    var g = new BMapGL.Geolocation()
+    g.getCurrentPosition(function(res){
+      console.log('res', res)
+      alert('res', res)
+    })
+  </script>
+
+</body>
+</html>

@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <style>
+    [v-cloak] { display: none; }
+  </style>
+
+</head>
+<body>
+
+  <div id="app">
+    <h1 v-cloak>{{ price | rmb }}</h1>
+    <h1 v-cloak :title='num|qf'>{{ num | sz | qf  }}</h1>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <script>
+    // 1、过滤器
+    // 作用：用于数据处理的。
+    // 全局过滤器：使用 Vue.filter('名称', val=>{return newVal}) 定义，在任何组件中都可以直接使用。
+    // 局部过滤器：使用 filters: {} 定义，只能在当前组件中使用。
+
+    // 注意1：过滤器只能用在 {{}} 和 v-bind 中，不支持其它指令。
+    // 注意2：过滤器还可以链式调用，像这样 {{ num | f1 | f2 }}，过滤器是有顺序的。
+
+    // 2、面试题
+    // 什么过滤器？你在工作中用它解决什么问题？（数据统一处理）
+    // 使用过滤器有什么要注意的？（只能在{{}}或者v-bind中使用）
+
+    Vue.filter('rmb', val=>{
+      // do something
+      return '￥'+Number(val).toFixed(2)
+    })
+
+    const app = new Vue({
+      el: '#app',
+      data: {
+        price: 99.9,
+        num: 202210923920
+      },
+      filters: {
+        'qf' (val) {
+          return 'QF:'+val
+        },
+        'sz' (val) {
+          return 'SZ:' + val
+        }
+      }
+    })
+  </script>
+</body>
+</html>

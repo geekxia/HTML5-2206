@@ -1,0 +1,87 @@
+.qf-layer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0,0,0,0.6);
+  .qf-modal {
+    width: 520px;
+    background: white;
+    border-radius: 3px;
+    position: absolute;
+    top: 120px;
+    left: 50%;
+    margin-left: -260px;
+    box-sizing: border-box;
+    header {
+      line-height: 50px;
+      padding: 0 20px;
+      border-bottom: 1px solid #eee;
+      font-size: 12px;
+      &>div {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        &>div:first-child {
+          float: left;
+        }
+        &>div:last-child {
+          float: right;
+          cursor: pointer;
+        }
+      }
+    }
+    footer {
+      line-height: 50px;
+      padding: 0 20px;
+      border-top: 1px solid #eee;
+      font-size: 12px;
+      height: 50px;
+      overflow: hidden;
+      &>.qf-button {
+        float: right;
+      }
+    }
+    main {
+      box-sizing: border-box;
+      padding: 20px;
+      font-size: 14px;
+    }
+  }
+}
+
+
+.qf-button {
+  display: inline-block;
+  cursor: pointer;
+  margin: 0 15px;
+  span {
+    display: inline-block;
+    height: 30px;
+    box-sizing: border-box;
+    line-height: 28px;
+    font-size: 12px;
+    border-radius: 2px;
+    padding: 0 15px;
+    border: 1px solid transparent;
+  }
+  span.default {
+    border-color: #ccc;
+  }
+  span.primary {
+    color: white;
+    background: blue;
+    border-color: blue;
+  }
+  span.danger {
+    color: white;
+    background: red;
+    border-color: red;
+  }
+  span.info {
+    color: white;
+    background: green;
+    border-color: green;
+  }
+}
